@@ -5,8 +5,9 @@ __pycache__/
 venv/
 *.egg-info/
 
-# Data (large, downloaded from Zenodo)
+# Data (large, downloaded from Zenodo) + cached built images
 data/*.h5
+data/cache/
 
 # Checkpoints / outputs
 checkpoints/*.pt

@@ -1,0 +1,37 @@
+[train] device = cpu
+[data] data/train.h5 already exists, skipping download.
+[data] data/val.h5 already exists, skipping download.
+[data] data/train.h5 already exists, skipping download.
+[data] Loading train from data/train.h5 ...
+[data] Loaded 200000 jets. Building jet images ...
+[data] cached images -> data/cache/train_n200000_img40.npz
+[data] train: 99922 top / 100078 qcd
+[data] data/val.h5 already exists, skipping download.
+[data] Loading val from data/val.h5 ...
+[data] Loaded 40000 jets. Building jet images ...
+[data] cached images -> data/cache/val_n40000_img40.npz
+[data] val: 20140 top / 19860 qcd
+[train] model params: 912,833
+[train] epoch 01/20 loss=0.2721 auc=0.9489 | val_loss=0.2310 val_auc=0.9670 (493.8s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9670)
+[train] epoch 02/20 loss=0.2189 auc=0.9684 | val_loss=0.2130 val_auc=0.9708 (482.2s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9708)
+[train] epoch 03/20 loss=0.2089 auc=0.9713 | val_loss=0.2163 val_auc=0.9715 (534.0s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9715)
+[train] epoch 04/20 loss=0.2028 auc=0.9731 | val_loss=0.2149 val_auc=0.9730 (648.8s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9730)
+[train] epoch 05/20 loss=0.1971 auc=0.9747 | val_loss=0.2083 val_auc=0.9731 (555.5s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9731)
+[train] epoch 06/20 loss=0.1938 auc=0.9755 | val_loss=0.2044 val_auc=0.9733 (602.3s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9733)
+[train] epoch 07/20 loss=0.1908 auc=0.9763 | val_loss=0.2125 val_auc=0.9738 (718.3s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9738)
+[train] epoch 08/20 loss=0.1867 auc=0.9773 | val_loss=0.2059 val_auc=0.9739 (602.0s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9739)
+[train] epoch 09/20 loss=0.1840 auc=0.9780 | val_loss=0.2063 val_auc=0.9739 (582.9s)
+[train] epoch 10/20 loss=0.1788 auc=0.9793 | val_loss=0.2101 val_auc=0.9730 (515.0s)
+[train] epoch 11/20 loss=0.1770 auc=0.9796 | val_loss=0.2074 val_auc=0.9735 (495.3s)
+[train] epoch 12/20 loss=0.1729 auc=0.9806 | val_loss=0.2146 val_auc=0.9724 (493.9s)
+[train] epoch 13/20 loss=0.1673 auc=0.9818 | val_loss=0.2166 val_auc=0.9717 (494.1s)
+[train] early stopping: no val AUC improvement for 5 epochs
+[train] best val AUC = 0.9739; history -> checkpoints/cnn_history.json

@@ -35,10 +35,14 @@ Dataset (Zenodo 2603256) using a CNN baseline on jet images. PyTorch.
 - Smoke test passes: 3 epochs / 4000 jets -> val AUC 0.9274, test AUC 0.9247.
 - 100k-jet training: 20 epochs / 100k train + 20k val -> best val AUC 0.9731
   (epoch 8), test AUC 0.9725, test accuracy 0.9152, 1/eps_B @ eps_S=0.3 = 410.
-  Data loading takes ~40 min on CPU; each epoch ~5 min. Model overfits after
-  epoch 8 (train AUC climbs to 0.993 while val AUC declines).
-- Full 1.2M training not yet run (CPU-only, 16 GB RAM; needs >20 GB peak for
-  image construction, or Colab/GPU with 32+ GB RAM).
+- 200k-jet training (2026-09-16): `--max-events 200000 --max-val-events 40000
+  --epochs 20 --batch-size 512 --early-stopping-patience 5` -> early stopped
+  at epoch 13, best val AUC 0.9739 (epoch 8). Evaluated on FULL 404k test set:
+  test AUC 0.9751, accuracy 0.9194, 1/eps_B @ eps_S=0.3 = 401.42.
+  Data build now takes ~2 min (chunked processing + arithmetic binning) and
+  images are cached to data/cache/*.npz. Peak RAM ~2.5 GB — no OOM.
+- Full 1.2M training not yet run (CPU-only, 16 GB RAM; should now fit with
+  chunked build but would be slow — est. several hours of training).
 
 ## Layout
 - `src/data/` — package: `download.py` (Zenodo fetch), `jet_image.py`

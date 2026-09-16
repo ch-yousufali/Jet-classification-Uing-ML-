@@ -96,76 +96,65 @@ def build_jet_images(
     [-img_range, img_range] in (eta_rel, phi_rel). Pixel value = sum of pT
     of constituents falling in that bin.
 
-    Processing is done in chunks of `chunk_size` jets to keep peak memory
-    low — each chunk's bincount only needs chunk_size * pixel_area entries.
+    All per-constituent intermediates (pt, eta_rel, phi_rel, bin indices)
+    are computed inside a chunk loop of `chunk_size` jets, so peak extra
+    memory stays ~chunk_size * 200 * 4 B * ~8 arrays (~320 MB at the
+    default 50k) regardless of N — only the input arrays and the output
+    image array scale with N.
 
     Returns a float32 array of shape (N, 1, img_size, img_size).
     """
     N = E.shape[0]
     pixel_area = img_size * img_size
+    bin_width = 2.0 * img_range / img_size
 
-    # pT of each constituent; zero-padded entries have E=0 -> pT=0.
-    pt = np.sqrt(np.maximum(PX**2 + PY**2, 0.0))  # (N, 200)
+    images = np.empty((N, img_size, img_size), dtype=np.float32)
 
-    # Jet axis: pT-weighted mean of constituent eta/phi.
-    # Guard against all-zero rows (should not happen, but be safe).
-    pt_sum = pt.sum(axis=1, keepdims=True)
-    pt_sum_safe = np.where(pt_sum > 0, pt_sum, 1.0)
-    jet_eta = (pt * Eta).sum(axis=1, keepdims=True) / pt_sum_safe  # (N,1)
-    jet_phi = (pt * Phi).sum(axis=1, keepdims=True) / pt_sum_safe
-
-    eta_rel = Eta - jet_eta  # (N, 200)
-    phi_rel = _delta_phi(Phi, jet_phi)
-
-    # Free inputs that are no longer needed to reduce peak memory.
-    del E, PX, PY, PZ, Eta, Phi, pt_sum, pt_sum_safe, jet_eta, jet_phi
-    gc.collect()
-
-    # Bin indices in [0, img_size). Use int32 to save memory vs int64.
-    bins = np.linspace(-img_range, img_range, img_size + 1)
-    ix = np.digitize(eta_rel, bins) - 1  # (N, 200)
-    iy = np.digitize(phi_rel, bins) - 1
-    ix = np.clip(ix, 0, img_size - 1).astype(np.int32)
-    iy = np.clip(iy, 0, img_size - 1).astype(np.int32)
-
-    del eta_rel, phi_rel, bins
-    gc.collect()
-
-    # Pre-allocate the output image array.
-    images = np.zeros((N, img_size, img_size), dtype=np.float32)
-
-    # Process in chunks: for each chunk, use np.bincount on the chunk's
-    # flattened indices (offset within the chunk) to scatter-add pT values
-    # into the image grid. This avoids creating a single giant bincount
-    # array of size N * pixel_area.
     for start in range(0, N, chunk_size):
         end = min(start + chunk_size, N)
-        cs = end - start  # chunk size
-        ix_c = ix[start:end]  # (cs, 200)
-        iy_c = iy[start:end]
-        pt_c = pt[start:end]  # (cs, 200)
+        sl = slice(start, end)
+        cs = end - start
 
-        # Flat pixel index within each event: ix * img_size + iy
-        # Then offset by event index within chunk * pixel_area
+        # pT of each constituent; zero-padded entries have E=0 -> pT=0.
+        pt = np.sqrt(np.maximum(PX[sl] * PX[sl] + PY[sl] * PY[sl], 0.0))  # (cs, 200)
+
+        # Jet axis: pT-weighted mean of constituent eta/phi.
+        # Guard against all-zero rows (should not happen, but be safe).
+        pt_sum = pt.sum(axis=1, keepdims=True)
+        pt_sum[pt_sum <= 0] = 1.0
+        jet_eta = (pt * Eta[sl]).sum(axis=1, keepdims=True) / pt_sum  # (cs,1)
+        jet_phi = (pt * Phi[sl]).sum(axis=1, keepdims=True) / pt_sum
+
+        eta_rel = Eta[sl] - jet_eta  # (cs, 200)
+        phi_rel = _delta_phi(Phi[sl], jet_phi)
+
+        # Uniform-grid binning: floor((x + range) / width) is equivalent
+        # to np.digitize on evenly-spaced bins (after clipping), but is a
+        # single vectorized op instead of a per-element binary search —
+        # ~10-50x faster on large arrays.
+        ix = np.floor((eta_rel + img_range) / bin_width)
+        iy = np.floor((phi_rel + img_range) / bin_width)
+        np.clip(ix, 0, img_size - 1, out=ix)
+        np.clip(iy, 0, img_size - 1, out=iy)
+
+        # Flat pixel index within each event: ix * img_size + iy, plus a
+        # per-event offset so bincount lands in the right image slice.
         flat_idx = (
-            ix_c.astype(np.int64) * img_size + iy_c.astype(np.int64)
+            ix.astype(np.int64) * img_size + iy.astype(np.int64)
             + (np.arange(cs, dtype=np.int64) * pixel_area).reshape(cs, 1)
         ).ravel()
-        pt_flat = pt_c.ravel()
 
-        chunk_images = np.bincount(flat_idx, weights=pt_flat, minlength=cs * pixel_area)
-        images[start:end] = chunk_images.astype(np.float32).reshape(cs, img_size, img_size)
+        chunk = np.bincount(flat_idx, weights=pt.ravel(), minlength=cs * pixel_area)
+        images[sl] = chunk.astype(np.float32).reshape(cs, img_size, img_size)
 
-        del ix_c, iy_c, pt_c, flat_idx, pt_flat, chunk_images
-
-    del ix, iy, pt
-    gc.collect()
+        del pt, pt_sum, jet_eta, jet_phi, eta_rel, phi_rel, ix, iy, flat_idx, chunk
 
     # Log-compress and standardize per-image (mean 0, std 1), common in
-    # jet-image literature. Keep a channel dim for the CNN.
-    images = np.log1p(images)
+    # jet-image literature. In-place ops avoid extra N-sized copies.
+    np.log1p(images, out=images)
     mean = images.mean(axis=(1, 2), keepdims=True)
     std = images.std(axis=(1, 2), keepdims=True)
-    std = np.where(std > 1e-6, std, 1.0)
-    images = (images - mean) / std
+    std[std <= 1e-6] = 1.0
+    images -= mean
+    images /= std
     return images[:, None, :, :].astype(np.float32)

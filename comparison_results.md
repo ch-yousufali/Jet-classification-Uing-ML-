@@ -38,6 +38,46 @@ Notes on the table:
 
 ---
 
+## 1a. 200k-Image Run — New Results (2026-09-16)
+
+Configuration and results for the latest 200,000-image training run. All
+previous tables above are unchanged; this table is appended for tracking.
+
+| Field | Value |
+|---|---|
+| Train jets | 200,000 (16.5% of the 1.2M training set) |
+| Val jets | 40,000 |
+| Test jets | 404,000 (full test set) |
+| Epochs run | 13 of 20 (early stopping, patience 5) |
+| Best epoch | 8 |
+| Batch size | 512 |
+| Optimizer | Adam, lr = 1e-3 |
+| Image size | 40 × 40 (eta-phi, ±0.8 rad) |
+| Model params | 912,833 |
+| Device | CPU only |
+| **Best val AUC** | **0.9739** |
+| **Test AUC** | **0.9751** |
+| **Test accuracy** | **0.9194** |
+| **1/ε_B @ ε_S=0.3** | **401.42** |
+
+Run notes:
+- Data-loading pipeline was rewritten for this run: uniform-bin arithmetic
+  binning replaces `np.digitize`, all per-constituent intermediates are
+  computed inside 50k-jet chunks, and built images are cached to
+  `data/cache/*.npz`. Build time dropped from ~40 min to ~2 min and peak RAM
+  stayed under ~2.5 GB — no OOM at 200k.
+- Early stopping triggered at epoch 13 (best val AUC at epoch 8; validation
+  AUC plateaued ~0.973-0.974 while train AUC kept climbing — mild overfitting
+  beyond epoch 8).
+- Checkpoints: `checkpoints/cnn_best.pt` (epoch 8), history in
+  `checkpoints/cnn_history.json`, training log in `logs_200k.txt`, eval log in
+  `eval_200k_full_test.txt`.
+- Compared to the 100k run (test AUC 0.9725 on 40k test jets), the 200k run
+  gains +0.0026 AUC and reaches 0.9751 — now evaluated on the **full**
+  404k-jet test set, the same test size used by the published models.
+
+---
+
 ## 2. Important Caveat About Our CNN Numbers
 
 Our CNN has **not** been trained on the full 1.2M-jet dataset. The numbers

@@ -1,0 +1,9 @@
+[eval] loading checkpoint from checkpoints/cnn_best.pt (val_auc=0.9739)
+[data] data/test.h5 already exists, skipping download.
+[data] Loading test from data/test.h5 ...
+[data] Loaded 404000 jets. Building jet images ...
+[data] cached images -> data/cache/test_nall_img40.npz
+[data] test: 202086 top / 201914 qcd
+[eval] test AUC          = 0.9751
+[eval] test accuracy     = 0.9194
+[eval] 1/eps_B @ eps_S=0.3 = 401.42

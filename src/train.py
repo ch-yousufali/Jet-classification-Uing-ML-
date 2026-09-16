@@ -83,6 +83,17 @@ def main():
         help="Cap val/test jets separately. Falls back to --max-events if unset.",
     )
     parser.add_argument(
+        "--cache-dir",
+        default="data/cache",
+        help="Directory to cache built jet images (.npz). Empty string disables.",
+    )
+    parser.add_argument(
+        "--early-stopping-patience",
+        type=int,
+        default=0,
+        help="Stop if val AUC has not improved for this many epochs (0 = off).",
+    )
+    parser.add_argument(
         "--splits",
         nargs="+",
         default=["train", "val"],
@@ -102,10 +113,15 @@ def main():
 
     # Download requested splits.
     ensure_splits(args.data_dir, splits=args.splits)
-    cfg = DatasetConfig(data_dir=args.data_dir, img_size=args.img_size, max_events=args.max_events)
+    cache_dir = args.cache_dir or None
+    cfg = DatasetConfig(
+        data_dir=args.data_dir, img_size=args.img_size,
+        max_events=args.max_events, cache_dir=cache_dir,
+    )
     val_cfg = DatasetConfig(
         data_dir=args.data_dir, img_size=args.img_size,
         max_events=args.max_val_events if args.max_val_events is not None else args.max_events,
+        cache_dir=cache_dir,
     )
 
     train_ds = JetImageDataset("train", cfg)
@@ -127,6 +143,7 @@ def main():
     criterion = nn.BCEWithLogitsLoss()
 
     best_val_auc = -1.0
+    epochs_since_best = 0
     history = []
     for epoch in range(1, args.epochs + 1):
         t0 = time.time()
@@ -140,7 +157,8 @@ def main():
         print(
             f"[train] epoch {epoch:02d}/{args.epochs} "
             f"loss={tr_loss:.4f} auc={tr_auc:.4f} | "
-            f"val_loss={va_loss:.4f} val_auc={va_auc:.4f} ({dt:.1f}s)"
+            f"val_loss={va_loss:.4f} val_auc={va_auc:.4f} ({dt:.1f}s)",
+            flush=True,
         )
         history.append(
             dict(epoch=epoch, train_loss=tr_loss, train_auc=tr_auc,
@@ -148,13 +166,23 @@ def main():
         )
         if va_auc > best_val_auc:
             best_val_auc = va_auc
+            epochs_since_best = 0
             ckpt = os.path.join(args.ckpt_dir, "cnn_best.pt")
             torch.save(
                 dict(epoch=epoch, model_state=model.state_dict(),
                      val_auc=va_auc, args=vars(args)),
                 ckpt,
             )
-            print(f"[train] saved best model -> {ckpt} (val_auc={va_auc:.4f})")
+            print(f"[train] saved best model -> {ckpt} (val_auc={va_auc:.4f})", flush=True)
+        else:
+            epochs_since_best += 1
+            if args.early_stopping_patience and epochs_since_best >= args.early_stopping_patience:
+                print(
+                    f"[train] early stopping: no val AUC improvement for "
+                    f"{args.early_stopping_patience} epochs",
+                    flush=True,
+                )
+                break
 
     # Save history.
     hist_path = os.path.join(args.ckpt_dir, "cnn_history.json")

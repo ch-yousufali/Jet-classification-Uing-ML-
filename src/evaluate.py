@@ -28,6 +28,11 @@ def main():
     parser.add_argument("--data-dir", default="data")
     parser.add_argument("--batch-size", type=int, default=512)
     parser.add_argument("--max-events", type=int, default=None)
+    parser.add_argument(
+        "--cache-dir",
+        default="data/cache",
+        help="Directory for cached jet images (.npz). Empty string disables.",
+    )
     parser.add_argument("--device", default=None)
     args = parser.parse_args()
 
@@ -42,7 +47,10 @@ def main():
     model.load_state_dict(ckpt["model_state"])
     model.eval()
 
-    cfg = DatasetConfig(data_dir=args.data_dir, img_size=img_size, max_events=args.max_events)
+    cfg = DatasetConfig(
+        data_dir=args.data_dir, img_size=img_size,
+        max_events=args.max_events, cache_dir=args.cache_dir or None,
+    )
     test_ds = JetImageDataset("test", cfg)
     loader = DataLoader(test_ds, batch_size=args.batch_size, shuffle=False)
 
