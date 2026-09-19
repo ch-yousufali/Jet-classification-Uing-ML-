@@ -20,12 +20,12 @@ import os
 import numpy as np
 import pytest
 
-from src.data import (
+from CNN import (
     DatasetConfig,
     build_jet_images,
     load_split_arrays,
 )
-from src.data.jet_image import _delta_phi
+from CNN.jet_image import _delta_phi
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), os.pardir, "data")
 
@@ -161,7 +161,7 @@ class TestLoadSplitArrays:
 class TestJetImageDataset:
     def test_dataset_len_and_item(self):
         cfg = DatasetConfig(data_dir=str(DATA_DIR), img_size=40, max_events=200)
-        ds = __import__("src.data", fromlist=["JetImageDataset"]).JetImageDataset(
+        ds = __import__("CNN", fromlist=["JetImageDataset"]).JetImageDataset(
             "val", cfg
         )
         assert len(ds) == 200

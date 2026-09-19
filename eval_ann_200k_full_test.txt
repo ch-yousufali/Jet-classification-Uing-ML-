@@ -1,0 +1,11 @@
+[ann-eval] loading checkpoint from checkpoints/ann_best.pt (val_auc=0.8920)
+[ann-data] loaded feature stats from data/cache/ann_stats_n200000.npz
+[data] data/test.h5 already exists, skipping download.
+[ann-data] Loading test features from data/test.h5 ...
+[ann-data] cached features -> data/cache/ann_test_nall.npz
+[ann-data] test: 202086 top / 201914 qcd
+/home/ch-yousufali/Work/thesis/Jet Classification Using ML/thesis-repo/ANN/evaluate.py:77: RuntimeWarning: overflow encountered in exp
+  probs = 1.0 / (1.0 + np.exp(-logits))
+[ann-eval] test AUC          = 0.8923
+[ann-eval] test accuracy     = 0.8133
+[ann-eval] 1/eps_B @ eps_S=0.3 = 36.51

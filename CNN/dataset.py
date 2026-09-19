@@ -12,7 +12,7 @@ import torch
 from torch.utils.data import Dataset
 
 from .download import download_split
-from .jet_image import IMG_SIZE, build_jet_images, load_split_arrays
+from .jet_image import IMG_SIZE, build_jet_images_streaming
 
 
 @dataclass
@@ -21,6 +21,7 @@ class DatasetConfig:
     img_size: int = IMG_SIZE
     max_events: int | None = None  # cap number of jets loaded (for smoke tests)
     cache_dir: str | None = None   # if set, built images are cached to .npz
+    augment: bool = False          # random eta/phi image flips (train only)
 
 
 class JetImageDataset(Dataset):
@@ -45,15 +46,16 @@ class JetImageDataset(Dataset):
             self.labels = cached["labels"]
         else:
             print(f"[data] Loading {split} from {path} ...")
-            E, PX, PY, PZ, Eta, Phi, y = load_split_arrays(path, self.cfg.max_events)
-            n = E.shape[0]
-            print(f"[data] Loaded {n} jets. Building jet images ...")
-            self.images = build_jet_images(
-                E, PX, PY, PZ, Eta, Phi, img_size=self.cfg.img_size
+            # Stream the HDF5 in chunks — constituents are never fully
+            # resident, so peak memory is just the output images (~300 MB
+            # scratch on top), enabling 800k-1.2M builds without OOM.
+            self.images, y = build_jet_images_streaming(
+                path, max_events=self.cfg.max_events, img_size=self.cfg.img_size
             )
-            # Keep labels (tiny), free the large constituent arrays.
+            n = len(y)
+            print(f"[data] Built {n} jet images ({self.images.nbytes / 1e9:.2f} GB)")
             self.labels = np.asarray(y, dtype=np.float32).reshape(-1)
-            del E, PX, PY, PZ, Eta, Phi, y
+            del y
             gc.collect()
             if cache_path:
                 os.makedirs(os.path.dirname(cache_path), exist_ok=True)
@@ -75,6 +77,16 @@ class JetImageDataset(Dataset):
         return len(self.labels)
 
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        x = torch.from_numpy(self.images[idx])
+        x = self.images[idx]
+        if self.cfg.augment:
+            # Random reflections across the eta and phi axes — jet physics
+            # is symmetric under both, so each flip is a valid new sample
+            # (x has shape (1, eta, phi)).
+            if np.random.rand() < 0.5:
+                x = x[:, ::-1, :]
+            if np.random.rand() < 0.5:
+                x = x[:, :, ::-1]
+            x = np.ascontiguousarray(x)
+        x = torch.from_numpy(x)
         y = torch.tensor(self.labels[idx])
         return x, y

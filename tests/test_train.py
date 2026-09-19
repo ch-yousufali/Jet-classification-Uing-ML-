@@ -17,8 +17,8 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
-from src.model import build_model
-from src.train import run_epoch
+from CNN.model import build_model
+from CNN.train import run_epoch
 
 
 def _synthetic_loader(n: int = 64, img_size: int = 40, seed: int = 0):
@@ -38,8 +38,9 @@ class TestRunEpoch:
         opt = torch.optim.Adam(model.parameters(), lr=1e-3)
         criterion = nn.BCEWithLogitsLoss()
         loader = _synthetic_loader(n=64)
-        loss, auc = run_epoch(model, loader, opt, criterion, device, desc="train")
+        loss, acc, auc = run_epoch(model, loader, opt, criterion, device, desc="train")
         assert np.isfinite(loss)
+        assert 0.0 <= acc <= 1.0
         assert 0.0 <= auc <= 1.0
 
     def test_eval_step_no_grad(self):
@@ -47,8 +48,9 @@ class TestRunEpoch:
         model = build_model(img_size=40, device=device)
         criterion = nn.BCEWithLogitsLoss()
         loader = _synthetic_loader(n=32)
-        loss, auc = run_epoch(model, loader, None, criterion, device, desc="val")
+        loss, acc, auc = run_epoch(model, loader, None, criterion, device, desc="val")
         assert np.isfinite(loss)
+        assert 0.0 <= acc <= 1.0
         assert 0.0 <= auc <= 1.0
 
     def test_loss_decreases_over_steps(self):
@@ -58,6 +60,6 @@ class TestRunEpoch:
         opt = torch.optim.Adam(model.parameters(), lr=1e-3)
         criterion = nn.BCEWithLogitsLoss()
         loader = _synthetic_loader(n=128)
-        first, _ = run_epoch(model, loader, opt, criterion, device)
-        second, _ = run_epoch(model, loader, opt, criterion, device)
+        first, *_ = run_epoch(model, loader, opt, criterion, device)
+        second, *_ = run_epoch(model, loader, opt, criterion, device)
         assert second < first

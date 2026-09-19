@@ -21,6 +21,7 @@ caveat below.
 
 | Model | Type | Accuracy | AUC | 1/ε_B @ ε_S=50% | 1/ε_B @ ε_S=30% | Params | Source |
 |---|---|---|---|---|---|---|---|
+| **Our CNN (200k, 20 ep)** | Jet-image 2D CNN | 0.9194 | 0.9751 | not logged | 401.4 | ~913k | This repo (eval run) |
 | **Our CNN (100k, 20 ep)** | Jet-image 2D CNN | 0.9152 | 0.9725 | not logged | 410 | ~913k | This repo (eval run) |
 | **Our CNN (smoke, 4k 3 ep)** | Jet-image 2D CNN | 0.8608 | 0.9247 | not logged | ~41 | ~913k | This repo (smoke test) |
 | ResNeXt-50 | Jet-image 2D CNN (deep) | 0.936 | 0.9837 | 302 ± 5 | 1147 ± 58 | 1.46M | ParticleNet paper, Table 2/4 |
@@ -75,6 +76,36 @@ Run notes:
 - Compared to the 100k run (test AUC 0.9725 on 40k test jets), the 200k run
   gains +0.0026 AUC and reaches 0.9751 — now evaluated on the **full**
   404k-jet test set, the same test size used by the published models.
+
+---
+
+## 1b. Mistakenly Done — Runs at >200k Data (kept for record)
+
+These runs accidentally used more than the 200k training jets the project
+calls for (or were left over from interrupted attempts). Kept for the
+record only.
+
+| Run | Train jets | Status | Best val AUC | Test AUC |
+|---|---|---|---|---|
+| 200-epoch run, died at epoch ~7 | 200k | interrupted (machine restart) | 0.9738 | not evaluated |
+| 800k run | 800k | killed at epoch 1 (superseded) | — | — |
+
+Note: the interrupted 200-epoch run's checkpoint (val AUC 0.9738, epoch 7)
+was evaluated and is covered by the 200k rows in §1 — it used the same
+200k images, so it is *not* a >200k run; only the 800k attempt belongs
+here.
+
+---
+
+## 1c. 200K Runs — Fresh Table (from scratch)
+
+All runs below use **exactly 200,000 training jets**, 40,000 validation
+jets, and the full 404,000-jet test set — no larger subsets.
+
+| Iteration | Config | Best val AUC | Test AUC | Test acc | 1/ε_B @ ε_S=0.3 |
+|---|---|---|---|---|---|
+| baseline | 40×40 images, 913k params, 20 ep | 0.9739 | 0.9751 | 0.9194 | 401.4 |
+| _new runs go here_ | | | | | |
 
 ---
 

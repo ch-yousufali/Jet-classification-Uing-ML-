@@ -1,0 +1,15 @@
+[train] device = cpu
+[data] data/train.h5 already exists, skipping download.
+[data] data/val.h5 already exists, skipping download.
+[data] data/train.h5 already exists, skipping download.
+[data] train: loading cached images from data/cache/train_n200000_img40.npz
+[data] train: 99922 top / 100078 qcd
+[data] data/val.h5 already exists, skipping download.
+[data] val: loading cached images from data/cache/val_n40000_img40.npz
+[data] val: 20140 top / 19860 qcd
+[train] model params: 912,833
+[train] lr schedule: cosine
+[train] epoch 01/200 loss=0.2724 acc=0.8857 auc=0.9488 | val_loss=0.2290 val_acc=0.9012 val_auc=0.9676 lr=1.00e-03 (786.1s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9676)
+[train] epoch 02/200 loss=0.2212 acc=0.9080 auc=0.9677 | val_loss=0.2190 val_acc=0.9079 val_auc=0.9697 lr=1.00e-03 (790.7s)
+[train] saved best model -> checkpoints/cnn_best.pt (val_auc=0.9697)

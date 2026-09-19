@@ -67,3 +67,8 @@ class JetImageCNN(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.features(x)
         return self.head(x).squeeze(-1)
+
+
+def build_model(img_size: int = 40, device: str | torch.device = "cpu") -> JetImageCNN:
+    model = JetImageCNN(img_size=img_size)
+    return model.to(device)

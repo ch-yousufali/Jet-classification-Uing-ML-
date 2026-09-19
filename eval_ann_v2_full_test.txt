@@ -1,0 +1,9 @@
+[ann-eval] loading checkpoint from checkpoints/ann_best.pt (val_auc=0.9545)
+[ann-data] loaded feature stats from data/cache/annv2_stats_n200000.npz
+[data] data/test.h5 already exists, skipping download.
+[ann-data] Loading test features from data/test.h5 ...
+[ann-data] cached features -> data/cache/annv2_test_nall.npz
+[ann-data] test: 202086 top / 201914 qcd
+[ann-eval] test AUC          = 0.9555
+[ann-eval] test accuracy     = 0.8923
+[ann-eval] 1/eps_B @ eps_S=0.3 = 117.73

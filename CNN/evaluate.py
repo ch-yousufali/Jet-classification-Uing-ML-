@@ -2,7 +2,7 @@
 
 Example:
 
-    .venv/bin/python -m src.evaluate --ckpt checkpoints/cnn_best.pt
+    .venv/bin/python -m CNN.evaluate --ckpt checkpoints/cnn_best.pt
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ import argparse
 
 import numpy as np
 import torch
+from scipy.special import expit
 from sklearn.metrics import (
     accuracy_score,
     roc_auc_score,
@@ -18,7 +19,7 @@ from sklearn.metrics import (
 )
 from torch.utils.data import DataLoader
 
-from .data import DatasetConfig, JetImageDataset
+from .dataset import DatasetConfig, JetImageDataset
 from .model import build_model
 
 
@@ -62,7 +63,7 @@ def main():
             all_labels.append(y.numpy())
     logits = np.concatenate(all_logits)
     labels = np.concatenate(all_labels)
-    probs = 1.0 / (1.0 + np.exp(-logits))
+    probs = expit(logits)
 
     auc = roc_auc_score(labels, probs)
     acc = accuracy_score(labels, (probs > 0.5).astype(int))

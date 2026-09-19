@@ -1,0 +1,14 @@
+[train] device = cpu
+[data] data/train.h5 already exists, skipping download.
+[data] data/val.h5 already exists, skipping download.
+[data] data/train.h5 already exists, skipping download.
+[data] Loading train from data/train.h5 ...
+[data] Built 800000 jet images (5.12 GB)
+[data] cached images -> data/cache/train_n800000_img40.npz
+[data] train: 399442 top / 400558 qcd
+[data] data/val.h5 already exists, skipping download.
+[data] val: loading cached images from data/cache/val_n40000_img40.npz
+[data] val: 20140 top / 19860 qcd
+[train] model params: 912,833
+[train] initialized weights from checkpoints/cnn_best.pt (val_auc=0.9738)
+[train] lr schedule: cosine

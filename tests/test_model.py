@@ -12,8 +12,8 @@ from __future__ import annotations
 import pytest
 import torch
 
-from src.model import JetImageCNN, build_model
-from src.model.cnn import ConvBlock
+from CNN.model import JetImageCNN, build_model
+from CNN.model import ConvBlock
 
 
 # --------------------------------------------------------------------------- #

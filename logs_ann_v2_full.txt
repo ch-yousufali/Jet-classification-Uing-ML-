@@ -1,0 +1,55 @@
+[ann-train] device = cpu
+[data] data/train.h5 already exists, skipping download.
+[data] data/val.h5 already exists, skipping download.
+[ann-data] computing train-split feature stats ...
+[ann-data] cached feature stats -> data/cache/annv2_stats_n1200000.npz
+[data] data/train.h5 already exists, skipping download.
+[ann-data] Loading train features from data/train.h5 ...
+[ann-data] cached features -> data/cache/annv2_train_n1200000.npz
+[ann-data] train: 599927 top / 600073 qcd
+[data] data/val.h5 already exists, skipping download.
+[ann-data] val: loading cached features from data/cache/annv2_val_n40000.npz
+[ann-data] val: 20140 top / 19860 qcd
+[ann-train] model params: 1,480,193
+[ann-train] lr schedule: cosine
+[ann-train] epoch 01/200 loss=0.2862 acc=0.8774 auc=0.9424 | val_loss=0.3355 val_acc=0.8540 val_auc=0.9427 lr=1.00e-03 (128.4s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9427)
+[ann-train] epoch 02/200 loss=0.2552 acc=0.8919 auc=0.9546 | val_loss=0.4319 val_acc=0.8023 val_auc=0.9370 lr=1.00e-03 (130.0s)
+[ann-train] epoch 03/200 loss=0.2425 acc=0.8972 auc=0.9597 | val_loss=0.3021 val_acc=0.8651 val_auc=0.9525 lr=9.99e-04 (129.7s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9525)
+[ann-train] epoch 04/200 loss=0.2314 acc=0.9015 auc=0.9638 | val_loss=0.2818 val_acc=0.8780 val_auc=0.9571 lr=9.99e-04 (156.9s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9571)
+[ann-train] epoch 05/200 loss=0.2221 acc=0.9055 auc=0.9671 | val_loss=0.3030 val_acc=0.8633 val_auc=0.9572 lr=9.98e-04 (212.2s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9572)
+[ann-train] epoch 06/200 loss=0.2155 acc=0.9088 auc=0.9692 | val_loss=0.3013 val_acc=0.8660 val_auc=0.9573 lr=9.98e-04 (212.5s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9573)
+[ann-train] epoch 07/200 loss=0.2102 acc=0.9112 auc=0.9708 | val_loss=0.8916 val_acc=0.5804 val_auc=0.9291 lr=9.97e-04 (214.3s)
+[ann-train] epoch 08/200 loss=0.2055 acc=0.9137 auc=0.9722 | val_loss=0.2280 val_acc=0.9041 val_auc=0.9688 lr=9.96e-04 (214.7s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9688)
+[ann-train] epoch 09/200 loss=0.2013 acc=0.9155 auc=0.9734 | val_loss=0.2168 val_acc=0.9095 val_auc=0.9708 lr=9.95e-04 (202.3s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9708)
+[ann-train] epoch 10/200 loss=0.1973 acc=0.9173 auc=0.9745 | val_loss=1.3434 val_acc=0.5290 val_auc=0.9244 lr=9.94e-04 (196.6s)
+[ann-train] epoch 11/200 loss=0.1940 acc=0.9188 auc=0.9754 | val_loss=0.2112 val_acc=0.9110 val_auc=0.9714 lr=9.93e-04 (197.6s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9714)
+[ann-train] epoch 12/200 loss=0.1910 acc=0.9204 auc=0.9762 | val_loss=0.2422 val_acc=0.8962 val_auc=0.9675 lr=9.91e-04 (200.2s)
+[ann-train] epoch 13/200 loss=0.1878 acc=0.9221 auc=0.9771 | val_loss=0.2148 val_acc=0.9100 val_auc=0.9711 lr=9.90e-04 (214.9s)
+[ann-train] epoch 14/200 loss=0.1847 acc=0.9233 auc=0.9778 | val_loss=0.2146 val_acc=0.9102 val_auc=0.9716 lr=9.88e-04 (209.4s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9716)
+[ann-train] epoch 15/200 loss=0.1814 acc=0.9249 auc=0.9786 | val_loss=0.2092 val_acc=0.9127 val_auc=0.9725 lr=9.86e-04 (209.6s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9725)
+[ann-train] epoch 16/200 loss=0.1786 acc=0.9263 auc=0.9793 | val_loss=0.2685 val_acc=0.8835 val_auc=0.9633 lr=9.84e-04 (210.9s)
+[ann-train] epoch 17/200 loss=0.1760 acc=0.9274 auc=0.9799 | val_loss=0.2115 val_acc=0.9130 val_auc=0.9724 lr=9.82e-04 (212.0s)
+[ann-train] epoch 18/200 loss=0.1735 acc=0.9287 auc=0.9805 | val_loss=0.2096 val_acc=0.9142 val_auc=0.9727 lr=9.80e-04 (206.5s)
+[ann-train] saved best model -> checkpoints/ann_best.pt (val_auc=0.9727)
+[ann-train] epoch 19/200 loss=0.1711 acc=0.9299 auc=0.9811 | val_loss=0.2233 val_acc=0.9074 val_auc=0.9700 lr=9.78e-04 (193.7s)
+[ann-train] epoch 20/200 loss=0.1680 acc=0.9312 auc=0.9818 | val_loss=0.2130 val_acc=0.9144 val_auc=0.9722 lr=9.76e-04 (193.5s)
+[ann-train] epoch 21/200 loss=0.1657 acc=0.9325 auc=0.9823 | val_loss=0.2874 val_acc=0.8766 val_auc=0.9603 lr=9.73e-04 (193.2s)
+[ann-train] epoch 22/200 loss=0.1636 acc=0.9335 auc=0.9827 | val_loss=0.2133 val_acc=0.9136 val_auc=0.9721 lr=9.71e-04 (198.6s)
+[ann-train] epoch 23/200 loss=0.1613 acc=0.9343 auc=0.9832 | val_loss=0.2156 val_acc=0.9129 val_auc=0.9717 lr=9.68e-04 (192.5s)
+[ann-train] epoch 24/200 loss=0.1594 acc=0.9351 auc=0.9836 | val_loss=0.2159 val_acc=0.9131 val_auc=0.9721 lr=9.65e-04 (189.9s)
+[ann-train] epoch 25/200 loss=0.1567 acc=0.9362 auc=0.9842 | val_loss=0.2217 val_acc=0.9117 val_auc=0.9715 lr=9.62e-04 (191.4s)
+[ann-train] epoch 26/200 loss=0.1551 acc=0.9371 auc=0.9845 | val_loss=0.2291 val_acc=0.9062 val_auc=0.9695 lr=9.59e-04 (190.9s)
+[ann-train] epoch 27/200 loss=0.1523 acc=0.9386 auc=0.9851 | val_loss=0.2217 val_acc=0.9135 val_auc=0.9713 lr=9.56e-04 (192.2s)
+[ann-train] epoch 28/200 loss=0.1505 acc=0.9393 auc=0.9855 | val_loss=0.2229 val_acc=0.9133 val_auc=0.9715 lr=9.53e-04 (190.9s)
+[ann-train] early stopping: no val AUC improvement for 10 epochs
+[ann-train] best val AUC = 0.9727; history -> checkpoints/ann_history.json
